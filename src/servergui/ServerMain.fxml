@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="servergui.ServerMainController"
+      spacing="10" styleClass="root-pane">
+    
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <Label text="🚀 Parking System Server" styleClass="title-label"/>
+
+    <GridPane hgap="10" vgap="10">
+        <columnConstraints>
+            <ColumnConstraints halignment="RIGHT"/>
+            <ColumnConstraints/>
+        </columnConstraints>
+        
+        <Label text="Server IP:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+        <TextField fx:id="serverIpField" GridPane.rowIndex="0" GridPane.columnIndex="1" editable="false"/>
+
+        <Label text="Server Port:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <TextField fx:id="serverPortField" GridPane.rowIndex="1" GridPane.columnIndex="1" text="5555"/>
+
+        <Label text="Database IP:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+        <TextField fx:id="dbIpField" GridPane.rowIndex="2" GridPane.columnIndex="1" text="localhost"/>
+
+        <Label text="Database Port:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+        <TextField fx:id="dbPortField" GridPane.rowIndex="3" GridPane.columnIndex="1" text="3306"/>
+
+        <Label text="DB Username:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+        <TextField fx:id="dbUserField" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+        <Label text="DB Password:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+        <PasswordField fx:id="dbPassField" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+    </GridPane>
+
+    <HBox spacing="10">
+        <Button text="Connect" onAction="#handleConnect" fx:id="connectButton" style="-fx-background-color: green; -fx-text-fill: white;"/>
+        <Button text="Disconnect" onAction="#handleDisconnect" fx:id="disconnectButton" style="-fx-background-color: red; -fx-text-fill: white;"/>
+        <Button text="Exit" onAction="#handleExit" style="-fx-background-color: gray; -fx-text-fill: white;"/>
+    </HBox>
+
+    <Label fx:id="statusLabel" text="Status will appear here" styleClass="status-label"/>
+
+    <TableView fx:id="clientTable">
+        <columns>
+            <TableColumn text="IP" fx:id="ipColumn"/>
+            <TableColumn text="Host" fx:id="hostColumn"/>
+            <TableColumn text="Status" fx:id="statusColumn"/>
+        </columns>
+    </TableView>
+
+</VBox>
