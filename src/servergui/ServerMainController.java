@@ -22,8 +22,13 @@ public class ServerMainController {
 
     private ServerController server;
 
+    // Observable list to hold and update client connection info
     private ObservableList<ClientInfo> clients = FXCollections.observableArrayList();
 
+    /**
+     * Initializes the controller when the GUI loads.
+     * Fills default values for DB and server fields, sets up table columns.
+     */
     @FXML
     public void initialize() {
         try {
@@ -37,6 +42,7 @@ public class ServerMainController {
         dbPassField.setText("Aa123456");
         serverPortField.setText("5555");
 
+        // Set up table columns to bind to ClientInfo properties
         ipColumn.setCellValueFactory(new PropertyValueFactory<>("ip"));
         hostColumn.setCellValueFactory(new PropertyValueFactory<>("host"));
         statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
@@ -44,6 +50,10 @@ public class ServerMainController {
         clientTable.setItems(clients);
     }
 
+    /**
+     * Handles the Connect button click.
+     * Tries to connect to the MySQL database and then starts the server.
+     */
     @FXML
     void handleConnect() {
         String dbIp = dbIpField.getText();
@@ -52,15 +62,18 @@ public class ServerMainController {
         String pass = dbPassField.getText();
         int serverPort = Integer.parseInt(serverPortField.getText());
 
+        // Create JDBC URL from user input
         String jdbcUrl = "jdbc:mysql://" + dbIp + ":" + dbPort + "/parking_db?serverTimezone=Asia/Jerusalem&useSSL=false&allowPublicKeyRetrieval=true";
 
         try {
+            // Test DB connection
             Connection conn = DriverManager.getConnection(jdbcUrl, user, pass);
             conn.close();
 
             statusLabel.setText("✅ DB connected. Starting server...");
 
-            server = new ServerController(serverPort, this);  // ← FIX: assign to field
+            // Start the server
+            server = new ServerController(serverPort, this);
             server.listen();
 
             statusLabel.setText("✅ Server running on port " + serverPort);
@@ -70,12 +83,16 @@ public class ServerMainController {
         }
     }
 
+    /**
+     * Handles the Disconnect button click.
+     * Stops the server and clears the reference.
+     */
     @FXML
     void handleDisconnect() {
         if (server != null) {
             try {
                 server.close();
-                server = null;  // ← clear reference
+                server = null;
                 statusLabel.setText("🔴 Server stopped running.");
             } catch (Exception e) {
                 statusLabel.setText("❌ Failed to stop server.");
@@ -86,15 +103,30 @@ public class ServerMainController {
         }
     }
 
+    /**
+     * Handles the Exit button click.
+     * Terminates the JavaFX application.
+     */
     @FXML
     void handleExit() {
         System.exit(0);
     }
 
+    /**
+     * Adds a newly connected client to the TableView.
+     * @param ip Client IP
+     * @param host Client hostname
+     * @param id Internal unique identifier (hash code)
+     */
     public void addClient(String ip, String host, int id) {
         Platform.runLater(() -> clients.add(new ClientInfo(ip, host, "Connected", id)));
     }
 
+    /**
+     * Updates the status of a client in the TableView (e.g., to "Disconnected").
+     * @param id Internal unique identifier (hash code)
+     * @param status New status string
+     */
     public void updateClientStatus(int id, String status) {
         Platform.runLater(() -> {
             for (ClientInfo client : clients) {
