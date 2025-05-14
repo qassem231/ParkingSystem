@@ -56,6 +56,10 @@ public class ServerMainController {
      */
     @FXML
     void handleConnect() {
+    	if (server != null && server.isListening()) {
+            statusLabel.setText("⚠️ Server is already running.");
+            return;
+        }
         String dbIp = dbIpField.getText();
         String dbPort = dbPortField.getText();
         String user = dbUserField.getText();
@@ -119,7 +123,17 @@ public class ServerMainController {
      * @param id Internal unique identifier (hash code)
      */
     public void addClient(String ip, String host, int id) {
-        Platform.runLater(() -> clients.add(new ClientInfo(ip, host, "Connected", id)));
+        Platform.runLater(() -> {
+            for (ClientInfo client : clients) {
+                if (client.getIp().equals(ip) && client.getHost().equals(host)) {
+                    client.setStatus("Connected");
+                    clientTable.refresh();
+                    return;
+                }
+            }
+            // If not found, add new
+            clients.add(new ClientInfo(ip, host, "Connected", id));
+        });
     }
 
     /**

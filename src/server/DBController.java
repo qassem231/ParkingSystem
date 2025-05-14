@@ -21,6 +21,33 @@ public class DBController {
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL, USER, PASSWORD);
     }
+    public List<Order> getOrdersBySubscriberId(int subscriberId) {
+        List<Order> orders = new ArrayList<>();
+        String sql = "SELECT * FROM `Order` WHERE subscriber_id = ?";
+
+        try (
+            Connection conn = getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)
+        ) {
+            stmt.setInt(1, subscriberId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                orders.add(new Order(
+                    rs.getInt("order_number"),
+                    rs.getInt("parking_space"),
+                    rs.getDate("order_date"),
+                    rs.getInt("confirmation_code"),
+                    rs.getInt("subscriber_id"),
+                    rs.getDate("date_of_placing_an_order")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return orders;
+    }
+
 
     // Retrieves all orders from the database and returns them as a list
     public List<Order> getAllOrders() {
